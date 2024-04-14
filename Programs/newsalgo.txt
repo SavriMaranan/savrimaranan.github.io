@@ -1,0 +1,70 @@
+let elided = " ";
+
+let paras = document.getElementsByTagName("p");
+let heads = document.getElementsByTagName("a");
+let spans = document.getElementsByTagName("span");
+let imgs = document.getElementsByTagName("img");
+const denylist = ["gaza", "israel", "palestin", "hamas", "netanyahu", "west bank"];
+let iter = 0
+
+function removeLinkElements(head) {
+	head.innerText = elided;
+	// to remove images, other 'uncaught' text
+	while (head.firstChild) {
+		head.removeChild(head.firstChild);
+	}
+}
+
+function program() {
+	for (let i = 0; i < paras.length; i++) {
+	for (let j = 0; j < denylist.length; j++) {
+  	if (paras[i].innerText.toLowerCase().includes(denylist[j])) {
+			// catch all text elements in a box
+			paras[i].parentElement.parentElement.innerText = elided;
+			// paras[i].innerText = elided;
+			}
+		}
+	}
+	for (let i = 0; i < heads.length; i++) {
+		for (let j = 0; j < denylist.length; j++) {
+  			if (heads[i].innerText.toLowerCase().includes(denylist[j])) {
+  				removeLinkElements(heads[i]);
+				}
+				if (heads[i].getAttribute("aria-label")!= null) {
+					if (heads[i].getAttribute("aria-label").toLowerCase().includes(denylist[j])) {
+						removeLinkElements(heads[i]);
+					}
+				}
+			}
+	}
+	// catch the spanned elements
+	for (let i = 0; i < spans.length; i++) {
+		for (let j = 0; j < denylist.length; j++) {
+  		if (spans[i].innerText.toLowerCase().includes(denylist[j])) {
+				spans[i].parentElement.parentElement.innerText = elided;
+
+				//spans[i].innerText = elided;
+			}
+		}
+	}
+
+	// no more (unwanted) image captions
+	for (let i = 0; i < imgs.length; i++) {
+		for (let j = 0; j < denylist.length; j++) {
+			if (imgs[i].getAttribute("alt")!=null) {
+				if (imgs[i].getAttribute("alt").toLowerCase().includes(denylist[j])) { 
+					imgs[i].setAttribute("alt"," ");
+					removeLinkElements(imgs[i].parentElement);
+				}
+			}
+		}																											
+	}
+	
+iter++;
+if (iter > 10) {
+	clearInterval(myInterval);
+	console.log("No longer running program")
+}
+}
+
+myInterval = setInterval(program, 500);
